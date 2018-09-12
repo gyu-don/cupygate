@@ -1,5 +1,5 @@
 import cupy as np
-import gate
+from . import gate
 
 DEFAULT_GATE_SET = {
     "i": gate.IGate,

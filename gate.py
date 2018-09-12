@@ -23,7 +23,8 @@ class XGate:
           q_inout[i - target_mask] = tmp;
         }
         """
-        )
+    )
+
     def __init__(self):
         pass
 
@@ -68,7 +69,8 @@ class ZGate:
         "uint64 target_mask, T q_inout",
         "",
         "q_inout = (1.0 - 2.0*(!!(i & target_mask)))*q_inout"
-        )
+    )
+
     def __init__(self):
         pass
 
@@ -76,7 +78,7 @@ class ZGate:
         n_qubits = helper["n_qubits"]
         for target in slicing(targets, n_qubits):
             target_mask = 1 << target
-            ZGate._kernel(target_mask, qubits)
+            self._kernel(target_mask, qubits)
         return qubits
 
     def to_qasm(self, helper, targets):
@@ -87,18 +89,28 @@ class ZGate:
         return qasm
 
 class HGate:
+    _kernel = cupy.ElementwiseKernel(
+        "uint64 target_mask, raw T q_inout",
+        "",
+        """
+        if (i & target_mask) {
+          double sqrt2_inv = 1.0 / sqrt(2.0);
+          T tmp1 = q_inout[i];
+          T tmp0 = q_inout[i - target_mask];
+          q_inout[i] = (tmp0 - tmp1) * sqrt2_inv;
+          q_inout[i - target_mask] = (tmp0 + tmp1) * sqrt2_inv;
+        }
+        """
+    )
+
     def __init__(self):
         pass
 
     def apply(self, helper, qubits, targets):
         n_qubits = helper["n_qubits"]
-        i = helper["indices"]
         for target in slicing(targets, n_qubits):
-            newq = cupy.zeros_like(qubits)
-            newq[(i & (1 << target)) == 0] = qubits[(i & (1 << target)) == 0] + qubits[(i & (1 << target)) != 0]
-            newq[(i & (1 << target)) != 0] = qubits[(i & (1 << target)) == 0] - qubits[(i & (1 << target)) != 0]
-            newq /= cupy.sqrt(2)
-            qubits = newq
+            target_mask = 1 << target
+            self._kernel(target_mask, qubits, size=len(qubits))
         return qubits
 
     def to_qasm(self, helper, targets):

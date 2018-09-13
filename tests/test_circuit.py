@@ -1,5 +1,5 @@
-from cupygate import Circuit
-import numpy as np
+from cupygate.circuit import Circuit
+import cupy as np
 import sys
 from collections import Counter
 

@@ -284,7 +284,8 @@ class Measurement:
         """
         q_inout = (!(i & target_mask) == (a <= p)) * q_inout / sqrt((a <= p) * a + (a > b) * (1.0 - a));
         b = a <= p;
-        """
+        """,
+        "0.0"
     )
 
     no_cache = True

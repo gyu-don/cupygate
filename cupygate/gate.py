@@ -278,7 +278,7 @@ class SGate:
 class Measurement:
     _kernel = cupy.ReductionKernel(
         "uint64 target_mask, float64 p, T q_inout",
-        "bool b",
+        "float64 b",
         "(!(_j & target_mask)) * (q_inout * q_inout.conj()).real",
         "a + b",
         """

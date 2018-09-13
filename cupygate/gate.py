@@ -284,7 +284,7 @@ class Measurement:
         n_qubits = helper["n_qubits"]
         i = helper["indices"]
         for target in slicing(targets, n_qubits):
-            p_zero = (qubits[(i & (1 << target)) == 0].T.conjugate() @ qubits[(i & (1 << target)) == 0]).real
+            p_zero = (np.conj(qubits[(i & (1 << target)) == 0].T) @ qubits[(i & (1 << target)) == 0]).real
             rand = random.random()
             if rand < p_zero:
                 qubits[(i & (1 << target)) != 0] = 0.0

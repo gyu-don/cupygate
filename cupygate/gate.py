@@ -283,7 +283,6 @@ class Measurement:
         "a + b",
         """
         q_inout = (!(i & target_mask) == (a <= p)) * q_inout / sqrt((a <= p) * a + (a > b) * (1.0 - a));
-        b = a <= p;
         """,
         "0.0"
     )
@@ -299,7 +298,7 @@ class Measurement:
         for target in slicing(targets, n_qubits):
             target_mask = 1 << target
             a = self._kernel(target_mask, p, qubits)
-            helper["cregs"][target] = int(a)
+            helper["cregs"][target] = int(a > p)
         return qubits
 
     def to_qasm(self, helper, targets):

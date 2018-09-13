@@ -276,7 +276,7 @@ class SGate:
         return qasm
 
 class Measurement:
-    _kernel_getp = cupy.ReductionKernel(
+    _kernel = cupy.ReductionKernel(
         "uint64 target_mask, T q_inout",
         "bool b",
         "(!(_j & target_mask)) * (q_inout * q_inout.conj()).real",

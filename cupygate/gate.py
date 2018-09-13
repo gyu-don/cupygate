@@ -279,10 +279,10 @@ class Measurement:
     _kernel = cupy.ReductionKernel(
         "uint64 target_mask, float64 p, T q_inout",
         "bool b",
-        "(!(i & target_mask)) * (q_inout * q_inout.conj()).real",
+        "(!(_j & target_mask)) * (q_inout * q_inout.conj()).real",
         "a + b",
         """
-        q_inout = (!(i & target_mask) == (a <= p)) * q_inout / sqrt((a <= p) * a + (a > b) * (1.0 - a))
+        q_inout = (!(_j & target_mask) == (a <= p)) * q_inout / sqrt((a <= p) * a + (a > b) * (1.0 - a))
         """,
         "0.0"
     )

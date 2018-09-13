@@ -1,7 +1,9 @@
 from cupygate.circuit import Circuit
-import cupy as np
+import cupy
 import sys
 from collections import Counter
+
+np = cupy
 
 EPS = 1e-16
 

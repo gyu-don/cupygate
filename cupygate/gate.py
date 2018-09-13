@@ -276,6 +276,17 @@ class SGate:
         return qasm
 
 class Measurement:
+    _kernel = cupy.ReductionKernel(
+        "uint64 target_mask, float64 p, T q_inout",
+        "int b",
+        "(!(i & target_mask)) * (q_inout * q_inout.conj()).real",
+        "a + b",
+        """
+        q_inout = (!(i & target_mask) == (a <= p)) * q_inout / sqrt((a <= p) * a + (a > b) * (1.0 - a));
+        b = a <= p;
+        """
+    )
+
     no_cache = True
     def __init__(self):
         pass
@@ -283,17 +294,11 @@ class Measurement:
     def apply(self, helper, qubits, targets):
         n_qubits = helper["n_qubits"]
         i = helper["indices"]
+        p = random.random()
         for target in slicing(targets, n_qubits):
-            p_zero = (cupy.conj(qubits[(i & (1 << target)) == 0].T) @ qubits[(i & (1 << target)) == 0]).real
-            rand = random.random()
-            if rand < p_zero:
-                qubits[(i & (1 << target)) != 0] = 0.0
-                qubits /= cupy.sqrt(p_zero)
-                helper["cregs"][target] = 0
-            else:
-                qubits[(i & (1 << target)) == 0] = 0.0
-                qubits /= cupy.sqrt(1.0 - p_zero)
-                helper["cregs"][target] = 1
+            target_mask = 1 << target
+            a = self._kernel(target_mask, p, qubits)
+            helper["cregs"][target] = a
         return qubits
 
     def to_qasm(self, helper, targets):

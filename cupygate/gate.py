@@ -278,7 +278,7 @@ class SGate:
 class Measurement:
     _kernel = cupy.ReductionKernel(
         "uint64 target_mask, float64 p, T q_inout",
-        "int b",
+        "bool b",
         "(!(i & target_mask)) * (q_inout * q_inout.conj()).real",
         "a + b",
         """
@@ -299,7 +299,7 @@ class Measurement:
         for target in slicing(targets, n_qubits):
             target_mask = 1 << target
             a = self._kernel(target_mask, p, qubits)
-            helper["cregs"][target] = a
+            helper["cregs"][target] = int(a)
         return qubits
 
     def to_qasm(self, helper, targets):

@@ -12,7 +12,7 @@ def vec_distsq(a, b):
     return cupy.conj(diff.T) @ diff
 
 def is_vec_same(a, b, eps=EPS):
-    return vec_distsq(a, b) < eps
+    return vec_distsq(a, b) < np.complex128(eps)
 
 def test_hgate1():
     assert is_vec_same(Circuit().h[1].h[0].run(), np.array([0.5, 0.5, 0.5, 0.5]))

@@ -7,7 +7,7 @@ EPS = 1e-16
 
 def vec_distsq(a, b):
     diff = a - b
-    return diff.T.conjugate() @ diff
+    return cupy.conj(diff.T) @ diff
 
 def is_vec_same(a, b, eps=EPS):
     return vec_distsq(a, b) < eps

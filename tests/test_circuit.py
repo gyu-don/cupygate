@@ -15,10 +15,10 @@ def is_vec_same(a, b, eps=EPS):
     return vec_distsq(a, b) < eps
 
 def test_hgate1():
-    assert is_vec_same(Circuit().h[1].h[0].run(), np.array([0.5, 0.5, 0.5, 0.5]))
+    assert is_vec_same(Circuit().h[1].h[0].run(), np.array([0.5, 0.5, 0.5, 0.5], dtype=complex128))
 
 def test_hgate2():
-    assert is_vec_same(Circuit().x[0].h[0].run(), np.array([1/np.sqrt(2), -1/np.sqrt(2)]))
+    assert is_vec_same(Circuit().x[0].h[0].run(), np.array([1/np.sqrt(2), -1/np.sqrt(2), dtype=complex128]))
 
 def test_hgate3():
     assert is_vec_same(Circuit().h[:2].run(), Circuit().h[0].h[1].run())

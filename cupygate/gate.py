@@ -282,7 +282,7 @@ class Measurement:
         "(!(i & target_mask)) * (q_inout * q_inout.conj()).real",
         "a + b",
         """
-        q_inout = (!(i & target_mask) == (a <= p)) * q_inout / sqrt((a <= p) * a + (a > b) * (1.0 - a));
+        q_inout = (!(i & target_mask) == (a <= p)) * q_inout / sqrt((a <= p) * a + (a > b) * (1.0 - a))
         """,
         "0.0"
     )
